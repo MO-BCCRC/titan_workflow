@@ -1,0 +1,4 @@
+#sample_id	tumour_id	tumour_library_id	tumour	normal_id	normal_library_id	normal	project_path
+SA500	test	test	/genesis/extscratch/shahlab/jrosner/test_bams/SA500_A20860_3_lanes_dupsFlagged.bam	SA500N	test	/genesis/extscratch/shahlab/jrosner/test_bams/SA500N_A20874_3_lanes_dupsFlagged.bam	/share/scratch/jrosner_temp/factory/project_inbox/$run_id
+DG1131a	test	test	/genesis/extscratch/shahlab/jrosner/test_bams/DG1131a_A14222_3_lanes_sort_rmdup_hg19.bam	DG1131N	test	/genesis/extscratch/shahlab/jrosner/test_bams/DG1131N_A14226_3_lanes_sort_rmdup_hg19.bam	/share/scratch/jrosner_temp/factory/project_inbox/$run_id
+DG1246	test	test	/genesis/extscratch/shahlab/jrosner/test_bams/DG1246_A32149_5_lanes_hg19_dupsFlagged.bam	DG1246N	test	/genesis/extscratch/shahlab/jrosner/test_bams/DG1246N_A32118_3_lanes_hg19_dupsFlagged.bam	/share/scratch/jrosner_temp/factory/project_inbox/$run_id

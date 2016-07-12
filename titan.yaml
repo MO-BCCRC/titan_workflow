@@ -1,0 +1,409 @@
+__PIPELINE_INFO__: 
+    name: titan 
+    version: 5.3
+    author: Diljot Grewal <dgrewal@bccrc.ca>
+    data_type: ['titan', 'titan_support']
+    input_type: bam
+    output_type: 'params.txt, .RData, seg, segs.txt, segs.txt.pygenes, titan.txt'
+    host_cluster: null
+    date_created: October 30 2014
+    date_last_updated: 'Mar 4, 2016 by dgrewal'
+    kronos_version: '2.0.4'
+__GENERAL__:
+    python: 'path to python'
+    R: 'path to R'
+    mutationseq: 'path to museq'
+__SHARED__:
+    ld_library_path: "path to python's ld_library_path"
+    pythonpath: "path to python's site-packages"
+    reference: 'path to the reference genome'
+    positions_file: 'path to the dbsnp positions file (in museq pos format)'
+    map: 'path to the mappability wig file'
+    gc: 'path to the gc wig file'
+    gene_sets_gtf: 'path to the gtf file (for pygenes annotation)'
+    interval_file: 'interval file (will run titan n times where n=number of lines in interval file; each run corresponding to the parameters specified in the line) *sample included'
+    r_libs: 'path to the R_LIBS directory (loads the R packages from this folder)'
+    y_threshold: 'the threshold for num_positions for Y chromosome (skips chrY if num_pos in Y is less than threshold)'
+    target_list: NULL
+    #if using anaconda/sklearn0.13.1 then uncomment next line
+    #model: 'model_single_v4.0.2_anaconda_sk_0.13.1.npz'
+    #if using python2.7/sklearn0.14.1 then uncomment next line
+    #model: 'model_single_v4.0.2.npz'
+    #if using the ucsc hg19 version then uncomment next line
+    #museq_interval_file: 'please provide the path to the ucsc interval file (see interval_file_ucsc.yaml)'
+    #if using the GRCh37 version, please uncomment next line
+    #museq_interval_file: null
+    #if using the NCBI genome version then uncomment next line
+    #genome_type: 'NCBI'
+    #if using the UCSC genome version then uncomment next line
+    #genome_type: 'UCSC'
+    #if using the NCBI genome version then uncomment next line
+    #chromosomes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y]
+    #if using the UCSC genome version then uncomment next line
+    #chromosomes: [chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chrX,chrY]
+__SAMPLES__:
+#    <tumour-id>_<normal-id>:
+#        tumour: 'path to the tumour bam file'
+#        normal: 'path to the normal bam file'
+__TASK_1__: 
+    reserved: 
+        # do not change this section
+        component_name: 'run_mutationseq'
+        component_version: '1.0.10'
+        seed_version: '4.3.8'
+    run: 
+        use_cluster: True
+        memory: '10G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+            LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
+            PYTHONPATH: ('__SHARED__', 'pythonpath')
+        boilerplate: null
+        parallel_run: True
+        parallel_params: []
+        interval_file: ('__SHARED__', 'museq_interval_file')
+    component: 
+        input_files: 
+            tumour: ('__SAMPLES__', 'tumour')
+            reference: ('__SHARED__', 'reference')
+            positions_file: null
+            normal: ('__SAMPLES__', 'normal')
+            model: ('__SHARED__','model')
+            config: 'metadata.config'
+        output_files: 
+            export_features: null
+            out: run_mutationseq/MutationSeq_SS.vcf
+            log_file: ../logs/mutationSeq_run.log
+        parameters: 
+            all: False
+            features_only: False
+            verbose: True 
+            manifest: '__OPTIONAL__'
+            interval: null
+            titan_mode: True
+            deep: False
+            no_filter: False
+            normalized: False
+            coverage: 4
+            threshold: 0.85
+            buffer_size: '2G'
+            single: True
+__TASK_2__: 
+    reserved: 
+        # do not change this section
+        component_name: 'convert_museq_vcf2counts'
+        component_version: '1.1.3'
+        seed_version: '1.1.0'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '10G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+            LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
+        boilerplate: null
+    component: 
+        input_files: 
+            infile: ('__TASK_1__', 'out')
+            positions_file: ('__SHARED__', 'positions_file')
+        output_files: 
+            outfile: 'results/museq2counts/output_museq_postprocess.txt'
+        parameters: 
+__TASK_3__: 
+    reserved: 
+        # do not change this section
+        component_name: 'run_readcounter'
+        component_version: '1.1.5'
+        seed_version: '1.0.0'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '5G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+            LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
+        boilerplate: null
+    component: 
+        input_files: 
+            bam: ('__SAMPLES__', 'tumour')
+        output_files: 
+            out: 'run_readcounter/tumour.wig'
+        parameters: 
+            q: '0'
+            w: '1000'
+            chromosomes: ('__SHARED__','chromosomes')
+            run_component: True
+__TASK_4__: 
+    reserved: 
+        # do not change this section
+        component_name: 'run_readcounter'
+        component_version: '1.1.5'
+        seed_version: '1.0.0'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '5G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+            LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
+        boilerplate: null
+    component: 
+        input_files: 
+            bam: ('__SAMPLES__', 'normal')
+        output_files: 
+            out: 'run_readcounter/normal.wig'
+        parameters: 
+            q: '0'
+            w: '1000'
+            chromosomes: ('__SHARED__','chromosomes')
+            run_component: True
+__TASK_5__: 
+    reserved: 
+        # do not change this section
+        component_name: 'calc_correctreads_wig'
+        component_version: '1.1.4'
+        seed_version: '0.1.2'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '5G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+            R_LIBS: ('__SHARED__', 'r_libs')
+        boilerplate: null
+    component: 
+        input_files: 
+            map: ('__SHARED__','map')
+            tumwig: ('__TASK_3__', 'out')
+            gc: ('__SHARED__','gc')
+            normwig: ('__TASK_4__', 'out')
+            target_list: ('__SHARED__', 'target_list')
+        output_files:
+            outfile: 'calc_correctreads_wig/correct_reads.txt'
+        parameters: 
+            id: $sample_id
+            hmmcopy: null
+            run_component: True
+            genome_type: ('__SHARED__','genome_type')
+__TASK_6__: 
+    reserved: 
+        # do not change this section
+        component_name: 'run_titan'
+        component_version: '1.1.6'
+        seed_version: '0.1.4'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '25G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+            R_LIBS: ('__SHARED__', 'r_libs')
+        boilerplate: null
+        parallel_run: True
+        parallel_params: []
+        interval_file: ('__SHARED__', 'interval_file')
+    component: 
+        input_files: 
+            map: ('__SHARED__', 'map')
+            infile: ('__TASK_2__', 'outfile')
+            cnfile: ('__TASK_5__', 'outfile')
+        output_files: 
+            outfile: 'results/${sample_id}_titan_outfile.txt'
+            obj_outfile: 'run_titan/titan_outfile_obj.RData'
+            outparam: 'results/${sample_id}_titan_outfile_params.txt'
+        parameters: 
+            txn_z_strength: '1e6'
+            normal_estimate_method: 'map'
+            pseudo_counts: '1e-300' 
+            num_cores: '4'
+            normal_param_nzero: '0.5'
+            myskew: '0'  
+            max_iters: '50'
+            alpha_high: '20000'
+            estimate_ploidy: 'TRUE'
+            symmetric: 'TRUE'
+            alpha_k: '15000'
+            txn_exp_len: '1e16'
+            num_clusters: null
+            ploidy: null
+            max_copynumber: '8'
+            id: $sample_id
+            genome_type: ('__SHARED__','genome_type')
+            chromosomes: ('__SHARED__','chromosomes')
+            y_threshold: ('__SHARED__','y_threshold')
+            max_depth: '1000'
+__TASK_7__: 
+    reserved: 
+        # do not change this section
+        component_name: 'plot_titan'
+        component_version: '1.1.4'
+        seed_version: '0.1.3'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '5G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+            R_LIBS: ('__SHARED__', 'r_libs')
+        boilerplate: null
+        parallel_run: True
+        parallel_params: ['obj_file']
+        interval_file: ('__SHARED__', 'interval_file')
+    component: 
+        input_files: 
+            obj_file: ('__TASK_6__', 'obj_outfile')
+        output_files: 
+            outdir: results/${sample_id}_titan_plots/
+        parameters: 
+            num_clusters: null
+            ploidy: null
+            chr: null
+            id: $sample_id
+            rid: $run_id
+__TASK_8__: 
+    reserved: 
+        # do not change this section
+        component_name: 'calc_cnsegments_titan'
+        component_version: '1.1.2'
+        seed_version: '0.1.3'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '2G'
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars: 
+        boilerplate: null
+        parallel_run: True
+        parallel_params: ['infile']
+        interval_file: ('__SHARED__', 'interval_file')
+    component: 
+        input_files: 
+            infile: ('__TASK_6__', 'outfile')
+        output_files: 
+            outigv: 'results/calc_cnsegments_titan/outigv.seg'
+            outfile: 'calc_cnsegments_titan/segs.txt'
+        parameters: 
+            id: $sample_id
+            symmetric: "1"
+__TASK_9__: 
+    reserved: 
+        # do not change this section
+        component_name: 'annot_pygenes'
+        component_version: '1.1.5'
+        seed_version: '1.0.2'
+    run: 
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '5G'
+        forced_dependencies: []
+        add_breakpoint: Fals e
+        env_vars: 
+            LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
+        boilerplate: null
+        parallel_run: True
+        parallel_params: ['infile']
+        interval_file: ('__SHARED__', 'interval_file')
+    component: 
+        input_files: 
+            gene_sets_gtf: ('__SHARED__', 'gene_sets_gtf')
+            gene_sets_gtf_bin: '__OPTIONAL__'
+            infile: ('__TASK_8__', 'outfile')
+        output_files: 
+            outfile: 'results/${sample_id}_titan_pygenes_segs.txt'
+        parameters: 
+            is_contained: '__OPTIONAL__'
+            save_gtf_as_bin: '__OPTIONAL__'
+            demix: False
+__TASK_10__:
+    reserved:
+        # do not change this section
+        component_name: 'calc_optimal_clusters_titan'
+        component_version: '1.0.0'
+        seed_version: '1.0.2'
+    run:
+        # NOTE: component cannot run in parallel mode.
+        use_cluster: True
+        memory: '1G'
+        forced_dependencies: ['__TASK_6__']
+        add_breakpoint: False
+        env_vars:
+            LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
+        boilerplate: null
+        parallel_run: False
+        parallel_params: null
+        interval_file: null
+    component:
+        input_files:
+            input_dir: 'results/'
+        output_files:
+            output: 'results/${sample_id}_titan_optimal_clusters.txt'
+        parameters:
+            sample_id: '${sample_id}'
+# ### TODO: before this can be integrated, need to change code to
+#           load data rather than read from db
+# __TASK_11__:
+#     reserved:
+#         # do not change this section.
+#         component_name: 'convert_titan_to_cbio'
+#         component_version: '1.1.0'
+#         seed_version: '1.1.0'
+#     run:
+#         # NOTE: component cannot run in parallel mode.
+#         use_cluster: True
+#         memory: '10G'
+#         num_cpus: 1
+#         forced_dependencies: []
+#         add_breakpoint: False
+#         env_vars:
+#         boilerplate:
+#     component:
+#         input_files:
+#             infile: '__REQUIRED__'
+#         output_files:
+#             outdir: '__REQUIRED__'
+#         parameters:
+#             normal_id: '__REQUIRED__'
+#             sample_id: '__REQUIRED__'
+__TASK_12__:
+    reserved:
+        # do not change this section.
+        component_name: 'parse_titan'
+        component_version: '1.0.0'
+        seed_version: '1.0.0'
+    run:
+        use_cluster: True
+        memory: '5G'
+        num_cpus: 1
+        forced_dependencies: []
+        add_breakpoint: False
+        env_vars:
+            PYTHONPATH: null
+            LD_LIBRARY_PATH: ('__SHARED__','ld_library_path')
+        boilerplate:
+        parallel_run: True
+        parallel_params: ['infile', 'paramsfile']
+        interval_file: ('__SHARED__','interval_file')
+    component:
+        input_files:
+            all_files: null
+            paramsfile: ('__TASK_6__', 'outparam')
+            infile: ('__TASK_9__','outfile')
+        output_files:
+            result: 'results/titan_parsed.tsv'
+        parameters:
+            label_mapping: null
+            project: null
+            segment_size_threshold: '5000'
+            normal_id: ('__SAMPLES__','normal_id')
+            genes: null
+            chromosomes: null
+            tumour_id: ('__SAMPLES__', 'tumour_id')
+            types: null
