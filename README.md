@@ -44,12 +44,6 @@ TITAN pipeline accepts a list of tumour-normal pair of BAM files as input and in
 
 The documentation for Kronos can be found [here](http://kronos.readthedocs.org/en/latest/).
 
-Please install kronos or run the following command if you are running the pipeline on genesis head node to set the necessary environment paths
-
-```
-source /shahlab/pipelines/kronos/setenv.sh
-```
-
 ### 2. The Inputs ###
 
 The pipeline takes a tab delimited file as input. The header of the file defines the keys and the each of the rows represents a value for these keys.
@@ -59,24 +53,11 @@ An input file for pipeline should resemble the following:
 ```
 #sample_id    tumour_id    tumour_library_id    tumour    normal_id    normal_library_id    normal
 SA123_A01234_SA123N_A01235    SA123    A01234    /path/to/SA123.bam    SA123N    A01235    /path/to/SA123N.bam
+SA223_A01234_SA223N_A01235    SA223    A01234    /path/to/SA223.bam    SA223N    A01235    /path/to/SA223N.bam
 ```
 
 
 ### 3. Setup ###
-
-#### 3.1 Running the pipeline on a shahlab or genesis clusters ####
-
-The pipeline includes 2 setup files, one for each input type. The files are:
-
-* __titan_setup_genesis.txt__: setup file for running the pipeline on the genesis cluster
-* __titan_setup_shahlab.txt__: setup file for running the pipeline on the shahlab cluster
-
-The setup files contain the path to the required softwares and reference files.
-
-
-#### 3.2 Running the pipeline on a different cluster ####
-
-The genesis and shahlab clusters are for shahlab's internal use only. If you don't have an account on these clusters or wish to setup the pipeline yourself, please refer to the following instructions.
 
 The pipeline requires the following:
 
@@ -91,7 +72,7 @@ __Softwares__
 
 
 * python should have the following packages installed:
-        * [sklearn 0.14.1](http://scikit-learn.org/stable/) (Other versions are not supported)
+    * [sklearn 0.14.1](http://scikit-learn.org/stable/) (Other versions are not supported)
     * [IntervalTree](https://pypi.python.org/pypi/intervaltree)
     * [numpy](http://www.numpy.org/) (tested for version 1.7.1 and highly recommended to link against BLAS)
     * [scipy](http://www.scipy.org/) (tested for version 0.12.0)
@@ -122,7 +103,7 @@ To recompile the pybam library follow the following steps:
         cd /path/to/pipeline/components/run_mutationseq/component_seed/
         rm -rf pybam.so
         rm -rf build/
-        make BOOSTPATH=/path/to/boost
+        make BOOSTPATH=/path/to/boost PYTHON=python 
 
 The make command requires python to compile the library. It will use the default python for the system. Please ensure that the path to your python installation is added in the PATH variable. You can check if your python install is set propearly by running:
 
@@ -133,7 +114,7 @@ The command should point to the python installation that will be used to run the
 
 __Mutationseq Models:__
 
-mutationseq uses different models for the paired and the single mode. The models are pickled with python 2.7.\* and sklearn 0.14.1 and should be loaded on a similar setup. The model compatibility can be checked in the python interpreter by running
+mutationseq uses different models for the paired and the single mode and are included with the mutationseq package. The models are pickled with python 2.7.\* and sklearn 0.14.1 and should be loaded on a similar setup. The model compatibility can be checked in the python interpreter by running
 
         python
         >>>from sklearn.externals import joblib
