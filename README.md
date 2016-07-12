@@ -78,7 +78,7 @@ __Softwares__
     * [scipy](http://www.scipy.org/) (tested for version 0.12.0)
     * [scikits-learn](http://scikit-learn.org/) (tested for version 0.14.1)
     * [matplotlib](http://matplotlib.org/) (tested for version 1.2.1)
-    * bamtools (tested for version 2.3.0 but modified slightly to meet our needs. It is provided in the package.)
+    * bamtools (tested for version 2.3.0 but modified slightly to meet our needs. included with mutationseq.)
     * [boost](http://www.boost.org) (version 1.51.0 or higher)
 
 * R should have the following packages installed:
