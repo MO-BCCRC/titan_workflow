@@ -35,4 +35,14 @@ parser.add_argument("--out",
                     required = True,  
                     help="specify the path where the output wig file will be saved")
 
+parser.add_argument("--chromosomes", 
+                    default = None,  
+                    type = list,
+                    nargs = '*',
+                    help="target chromosomes")
+
+parser.add_argument("--run_component", 
+                    action='store_true',
+                    help="component runs if set")
+
 args = parser.parse_args()

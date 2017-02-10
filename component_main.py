@@ -15,7 +15,7 @@ import sys
 class Component(ComponentAbstract):
 
     def __init__(self,component_name='run_readcounter', component_parent_dir=None, seed_dir=None):
-        self.version = '1.1.3'
+        self.version = '1.1.6'
         ## initialize ComponentAbstract
         super(Component, self).__init__(component_name, component_parent_dir, seed_dir)
 
@@ -28,14 +28,21 @@ class Component(ComponentAbstract):
 
         command = os.path.join(self.seed_dir, 'readCounter')
 
-        if self.args.chromosomes:
-            chromosomes = self.args.chromosomes
-        else:
-            chromosomes = ','.join(map(str,range(1,23)) + ['X','Y', 'MT'])
+
         #couldn't iterate as the order isn't preserved in args object
         command_args = [self.args.bam, '-w'+str(self.args.w),
-                       '-q'+str(self.args.q), '-c', chromosomes,
-                       '>', self.args.out ]
+                       '-q'+str(self.args.q)]
+
+
+        if self.args.chromosomes:
+            if isinstance(self.args.chromosomes, list):
+                chrs = ','.join(self.args.chromosomes)
+                command_args.extend(['-c', chrs])
+            else:
+                command_args.extend(['-c', self.args.chromosomes])
+
+
+        command_args.extend(['>', self.args.out])
 
         return command,command_args
 
