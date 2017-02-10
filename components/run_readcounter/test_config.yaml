@@ -1,0 +1,18 @@
+make_cmd_tests:
+  normal_pipeline_args:
+    args:
+      bam: __REQUIRED__
+      chromosomes: null
+      out: __REQUIRED__
+      q: '0'
+      run_component: __REQUIRED__
+      w: '1000'
+    chunk: 'null'
+    output:
+      cmd: component_seed/readCounter
+      cmd_args:
+      - __REQUIRED__
+      - -w1000
+      - -q0
+      - '>'
+      - __REQUIRED__
