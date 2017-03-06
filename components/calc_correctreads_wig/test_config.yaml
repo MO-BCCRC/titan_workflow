@@ -1,0 +1,27 @@
+make_cmd_tests:
+  normal_pipeline_args:
+    args:
+      gc: path/to/gc
+      genome_type: NCBI
+      hmmcopy: false
+      map: path/to/map
+      mapcutoff: 1
+      normwig: path/to/norm
+      outfile: path/to/out
+      outobj: path/to/outobj
+      run_component: true
+      target_list: 'NULL'
+      tumwig: path/to/tum
+    chunk: null
+    output:
+      cmd: R --no-save --args
+      cmd_args:
+      - path/to/tum
+      - path/to/norm
+      - path/to/gc
+      - path/to/map
+      - 'NULL'
+      - path/to/out
+      - NCBI
+      - <
+      - component_seed/correctReads.R

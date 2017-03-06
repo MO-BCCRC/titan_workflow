@@ -14,7 +14,7 @@ class Component(ComponentAbstract):
 
     def __init__(self, component_name='calc_correctreads_wig',
                  component_parent_dir=None, seed_dir=None):
-        self.version = '1.1.3'
+        self.version = '1.1.5'
         ## initialize ComponentAbstract
         super(Component, self).__init__(component_name, 
                                         component_parent_dir, seed_dir)
@@ -48,9 +48,15 @@ class Component(ComponentAbstract):
 
             cmd = ' '.join([self.requirements['R'], '--no-save', '--args'])
 
+            if not self.args.target_list:
+                target_list='NULL'
+            else:
+                target_list = self.args.target_list
+
             cmd_args = [self.args.tumwig, self.args.normwig,
                         self.args.gc, self.args.map,
-                        self.args.target_list, self.args.outfile,'<', path]
+                        target_list, self.args.outfile,
+                        self.args.genome_type,'<', path]
 
         return cmd, cmd_args
 
