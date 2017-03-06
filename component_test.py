@@ -158,7 +158,7 @@ class check_requirements(unittest.TestCase):
             if req == True:
                 self.assertEqual(params_dict[dest], '__REQUIRED__', 'params and ui dont match')
             else:
-                if not params_dict[dest] in [default,None]:
+                if not params_dict[dest] in [default,'__OPTIONAL__']:
                     self.assertEqual(True, False, 'Please ensure that either default or ' +\
                                      '__OPTIONAL__ flag is provided for: '+params_dict[dest]) 
 

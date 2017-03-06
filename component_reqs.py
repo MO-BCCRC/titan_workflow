@@ -14,9 +14,9 @@ interval_file = None
 
 memory = '5G'
 
-version = '1.1.3'
+version = '1.1.5'
 
-seed_version = '0.1.1'
+seed_version = '0.1.2'
 
 requirements = {'R':'R',
                 'Rscript':'Rscript'}
