@@ -1,14 +1,14 @@
-__PIPELINE_INFO__: 
-    name: titan 
-    version: 5.3
+__PIPELINE_INFO__:
+    name: titan
+    version: 5.4
     author: Diljot Grewal <dgrewal@bccrc.ca>
     data_type: ['titan', 'titan_support']
     input_type: bam
     output_type: 'params.txt, .RData, seg, segs.txt, segs.txt.pygenes, titan.txt'
     host_cluster: null
     date_created: October 30 2014
-    date_last_updated: 'Mar 4, 2016 by dgrewal'
-    kronos_version: '2.0.4'
+    date_last_updated: 'Mar 29, 2018 by dgrewal'
+    kronos_version: '2.3.0'
 __GENERAL__:
     python: 'path to python'
     R: 'path to R'
@@ -63,6 +63,10 @@ __TASK_1__:
         parallel_run: True
         parallel_params: []
         interval_file: ('__SHARED__', 'museq_interval_file')
+        merge: True
+        requirements:
+            mutationseq:
+            python:
     component: 
         input_files: 
             tumour: ('__SAMPLES__', 'tumour')
@@ -104,6 +108,8 @@ __TASK_2__:
         env_vars: 
             LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
         boilerplate: null
+        requirements:
+            python:
     component: 
         input_files: 
             infile: ('__TASK_1__', 'out')
@@ -126,6 +132,8 @@ __TASK_3__:
         env_vars: 
             LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
         boilerplate: null
+        requirements:
+            python:
     component: 
         input_files: 
             bam: ('__SAMPLES__', 'tumour')
@@ -151,6 +159,8 @@ __TASK_4__:
         env_vars: 
             LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
         boilerplate: null
+        requirements:
+            python:
     component: 
         input_files: 
             bam: ('__SAMPLES__', 'normal')
@@ -176,6 +186,9 @@ __TASK_5__:
         env_vars: 
             R_LIBS: ('__SHARED__', 'r_libs')
         boilerplate: null
+        requirements:
+            R:
+            Rscript:
     component: 
         input_files: 
             map: ('__SHARED__','map')
@@ -206,8 +219,12 @@ __TASK_6__:
             R_LIBS: ('__SHARED__', 'r_libs')
         boilerplate: null
         parallel_run: True
+        merge: False
         parallel_params: []
         interval_file: ('__SHARED__', 'interval_file')
+        requirements:
+            R:
+            Rscript:
     component: 
         input_files: 
             map: ('__SHARED__', 'map')
@@ -254,8 +271,12 @@ __TASK_7__:
             R_LIBS: ('__SHARED__', 'r_libs')
         boilerplate: null
         parallel_run: True
+        merge: False
         parallel_params: ['obj_file']
         interval_file: ('__SHARED__', 'interval_file')
+        requirements:
+            R:
+            Rscript:
     component: 
         input_files: 
             obj_file: ('__TASK_6__', 'obj_outfile')
@@ -282,8 +303,11 @@ __TASK_8__:
         env_vars: 
         boilerplate: null
         parallel_run: True
+        merge: False
         parallel_params: ['infile']
         interval_file: ('__SHARED__', 'interval_file')
+        requirements:
+            perl:
     component: 
         input_files: 
             infile: ('__TASK_6__', 'outfile')
@@ -309,8 +333,11 @@ __TASK_9__:
             LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
         boilerplate: null
         parallel_run: True
+        merge: False
         parallel_params: ['infile']
         interval_file: ('__SHARED__', 'interval_file')
+        requirements:
+            python:
     component: 
         input_files: 
             gene_sets_gtf: ('__SHARED__', 'gene_sets_gtf')
@@ -338,8 +365,11 @@ __TASK_10__:
             LD_LIBRARY_PATH: ('__SHARED__', 'ld_library_path')
         boilerplate: null
         parallel_run: False
+        merge: False
         parallel_params: null
         interval_file: null
+        requirements:
+            python:
     component:
         input_files:
             input_dir: 'results/'
@@ -389,8 +419,11 @@ __TASK_12__:
             LD_LIBRARY_PATH: ('__SHARED__','ld_library_path')
         boilerplate:
         parallel_run: True
+        merge: False
         parallel_params: ['infile', 'paramsfile']
         interval_file: ('__SHARED__','interval_file')
+        requirements:
+            python:
     component:
         input_files:
             all_files: null
